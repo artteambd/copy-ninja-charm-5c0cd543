@@ -67,7 +67,43 @@ const AnimatedCounter = ({ value, prefix = "", suffix = "" }: { value: number; p
   return <span>{prefix}{display}{suffix}</span>;
 };
 
-const HomeSection = ({ onNavigate }: HomeSectionProps) => (
+const FaqItem = ({ question, answer, index }: { question: string; answer: string; index: number }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1 }}
+      className="glass rounded-xl overflow-hidden"
+    >
+      <button
+        onClick={() => setOpen(!open)}
+        data-interactive
+        className="w-full flex items-center justify-between p-5 text-left group"
+      >
+        <span className="font-orbitron text-xs tracking-wider pr-4">{question}</span>
+        <motion.span
+          animate={{ rotate: open ? 45 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="text-muted-foreground text-lg shrink-0"
+        >
+          +
+        </motion.span>
+      </button>
+      <motion.div
+        initial={false}
+        animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.3 }}
+        className="overflow-hidden"
+      >
+        <p className="px-5 pb-5 text-muted-foreground text-sm leading-relaxed">{answer}</p>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+
   <div className="relative">
     {/* SCROLLING TICKER */}
     <div className="relative overflow-hidden border-b border-border/20 py-2">
