@@ -103,7 +103,7 @@ const FaqItem = ({ question, answer, index }: { question: string; answer: string
   );
 };
 
-
+const HomeSection = ({ onNavigate }: HomeSectionProps) => (
   <div className="relative">
     {/* SCROLLING TICKER */}
     <div className="relative overflow-hidden border-b border-border/20 py-2">
