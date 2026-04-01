@@ -311,50 +311,76 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
       </div>
     </section>
 
-    {/* LIVE SIGNAL FEED */}
-    <section className="py-16 px-6 border-y border-border/20">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <Wifi size={14} className="text-emerald-400" />
-          <span className="font-orbitron text-[10px] tracking-[0.5em] text-muted-foreground">LIVE SIGNAL FEED</span>
+    {/* HOW IT WORKS — TIMELINE */}
+    <section className="py-24 px-6 border-y border-border/20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/3 to-transparent pointer-events-none" />
+      <div className="max-w-4xl mx-auto relative z-10">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <Rocket size={16} className="text-muted-foreground" />
+          <span className="font-orbitron text-[10px] tracking-[0.5em] text-muted-foreground">GET STARTED IN MINUTES</span>
         </div>
-        <div className="space-y-3">
+        <h2 className="font-orbitron text-2xl md:text-3xl gradient-text text-center mb-16">HOW IT WORKS</h2>
+
+        <div className="relative">
+          {/* Vertical line */}
+          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-border/40 to-transparent md:-translate-x-px" />
+
           {[
-            { pair: "BTC/USDT", type: "LONG", entry: "$67,420", tp: "$69,800", time: "2m ago", status: "active" },
-            { pair: "ETH/USDT", type: "LONG", entry: "$3,512", tp: "$3,680", time: "8m ago", status: "tp-hit" },
-            { pair: "SOL/USDT", type: "SHORT", entry: "$178.50", tp: "$172.00", time: "15m ago", status: "tp-hit" },
-          ].map((signal, i) => (
+            { step: "01", icon: Target, title: "Choose Your Bot", desc: "Browse our collection of AI-powered trading bots, each optimized for different strategies and markets.", delay: 0 },
+            { step: "02", icon: Lock, title: "Secure Payment", desc: "Complete your purchase via Binance Pay — encrypted, instant, and hassle-free.", delay: 0.15 },
+            { step: "03", icon: Clock, title: "Activation in 24H", desc: "Our team configures and activates your bot within 24 hours. You'll receive full access credentials.", delay: 0.3 },
+            { step: "04", icon: TrendingUp, title: "Start Profiting", desc: "Sit back and watch your bot execute precision trades 24/7 across global markets.", delay: 0.45 },
+          ].map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className="glass rounded-xl px-6 py-4 flex items-center justify-between gap-4 flex-wrap"
+              transition={{ delay: item.delay, duration: 0.5 }}
+              className={`relative flex items-start gap-6 mb-12 last:mb-0 ${
+                i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+              } flex-row`}
             >
-              <div className="flex items-center gap-3">
-                <span className={`font-orbitron text-[10px] px-2 py-0.5 rounded ${
-                  signal.type === "LONG" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
-                }`}>
-                  {signal.type}
-                </span>
-                <span className="font-orbitron text-sm tracking-wider">{signal.pair}</span>
+              {/* Node dot */}
+              <div className="absolute left-6 md:left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-muted border-2 border-border z-10 mt-6" />
+
+              {/* Content card */}
+              <div className={`ml-14 md:ml-0 md:w-[calc(50%-2rem)] ${i % 2 === 0 ? "md:pr-8 md:text-right" : "md:pl-8 md:ml-auto"}`}>
+                <div className="glass rounded-2xl p-6 group magnetic-hover relative overflow-hidden">
+                  <span className="absolute inset-0 bg-gradient-to-br from-foreground/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className={`relative z-10 ${i % 2 === 0 ? "md:flex md:flex-col md:items-end" : ""}`}>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="font-orbitron text-[10px] tracking-[0.3em] text-muted-foreground">{item.step}</span>
+                      <div className="w-8 h-8 rounded-lg glass-strong flex items-center justify-center">
+                        <item.icon size={16} className="text-art-grey-600" />
+                      </div>
+                    </div>
+                    <h3 className="font-orbitron text-sm tracking-wider mb-2">{item.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-6 text-xs text-muted-foreground">
-                <span>Entry: <span className="text-foreground">{signal.entry}</span></span>
-                <span>TP: <span className="text-foreground">{signal.tp}</span></span>
-                <span className={`font-orbitron text-[9px] px-2 py-0.5 rounded-full ${
-                  signal.status === "active"
-                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                    : "bg-foreground/5 text-muted-foreground border border-border/30"
-                }`}>
-                  {signal.status === "active" ? "● ACTIVE" : "✓ TP HIT"}
-                </span>
-              </div>
-              <span className="text-[10px] text-muted-foreground">{signal.time}</span>
             </motion.div>
           ))}
         </div>
+
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center mt-12"
+        >
+          <button
+            onClick={() => onNavigate("BOTS")}
+            data-interactive
+            className="glass magnetic-hover px-8 py-3 font-orbitron text-[11px] tracking-widest text-foreground rounded-lg inline-flex items-center gap-2 group relative overflow-hidden"
+          >
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+            START NOW
+            <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+        </motion.div>
       </div>
     </section>
 
