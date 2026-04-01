@@ -1,16 +1,53 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import CustomCursor from "@/components/CustomCursor";
+import ParticleCanvas from "@/components/ParticleCanvas";
+import Navbar, { type Page } from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import HomeSection from "@/components/sections/HomeSection";
+import BotsSection from "@/components/sections/BotsSection";
+import ResultsSection from "@/components/sections/ResultsSection";
+import HistorySection from "@/components/sections/HistorySection";
+import ContactSection from "@/components/sections/ContactSection";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const [page, setPage] = useState<Page>("HOME");
+
+  const navigate = (p: Page) => {
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const renderPage = () => {
+    switch (page) {
+      case "HOME": return <HomeSection onNavigate={navigate} />;
+      case "BOTS": return <BotsSection />;
+      case "RESULTS": return <ResultsSection />;
+      case "DEVELOPER HISTORY": return <HistorySection />;
+      case "CONTACT": return <ContactSection />;
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="relative min-h-screen">
+      <CustomCursor />
+      <ParticleCanvas />
+      <Navbar activePage={page} onNavigate={navigate} />
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={page}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="relative z-10"
+        >
+          {renderPage()}
+        </motion.main>
+      </AnimatePresence>
+      <Footer onNavigate={navigate} />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
