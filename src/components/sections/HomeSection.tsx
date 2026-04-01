@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import { Shield, Zap, TrendingUp, Lock, BarChart3, Users, Globe, ArrowRight, Activity, Cpu, Target, Clock, Rocket, ChevronRight } from "lucide-react";
+import { Shield, Zap, TrendingUp, Lock, BarChart3, Users, Globe, ArrowRight, Activity, Cpu, Target, Clock, Rocket, ChevronRight, Star, MessageSquare, Award, Layers } from "lucide-react";
 import type { Page } from "../Navbar";
 
 interface HomeSectionProps {
