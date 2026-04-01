@@ -384,6 +384,123 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
       </div>
     </section>
 
+    {/* TESTIMONIALS */}
+    <section className="py-24 px-6">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <MessageSquare size={16} className="text-muted-foreground" />
+          <span className="font-orbitron text-[10px] tracking-[0.5em] text-muted-foreground">TRADER REVIEWS</span>
+        </div>
+        <h2 className="font-orbitron text-2xl md:text-3xl gradient-text text-center mb-16">WHAT TRADERS SAY</h2>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            { name: "Alex M.", role: "Crypto Trader", text: "ARTRIX AI completely changed my trading game. 87% win rate is no joke — I've tripled my portfolio in 3 months.", stars: 5, profit: "+320%" },
+            { name: "Sarah K.", role: "Day Trader", text: "The signals are incredibly accurate. I was skeptical at first but the results speak for themselves. Best investment I've made.", stars: 5, profit: "+185%" },
+            { name: "David R.", role: "Swing Trader", text: "TWJ LIVE bot runs 24/7 and I wake up to profits every morning. The team support is also top-notch.", stars: 5, profit: "+240%" },
+          ].map((t, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.15 }}
+              className="glass rounded-2xl p-6 magnetic-hover group relative overflow-hidden"
+            >
+              <span className="absolute inset-0 bg-gradient-to-br from-foreground/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-1 mb-4">
+                  {Array.from({ length: t.stars }).map((_, j) => (
+                    <Star key={j} size={12} className="fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-6 italic">"{t.text}"</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-orbitron text-xs tracking-wider">{t.name}</p>
+                    <p className="text-muted-foreground text-[10px]">{t.role}</p>
+                  </div>
+                  <span className="font-orbitron text-xs tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                    {t.profit}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* COMPARISON TABLE */}
+    <section className="py-24 px-6 border-y border-border/20">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <Layers size={16} className="text-muted-foreground" />
+          <span className="font-orbitron text-[10px] tracking-[0.5em] text-muted-foreground">COMPARISON</span>
+        </div>
+        <h2 className="font-orbitron text-2xl md:text-3xl gradient-text text-center mb-4">ART SOFTWARES vs OTHERS</h2>
+        <p className="text-muted-foreground text-center max-w-lg mx-auto mb-12">See why professionals choose us over traditional trading tools.</p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="glass rounded-2xl overflow-hidden"
+        >
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border/20">
+                <th className="text-left font-orbitron text-[10px] tracking-wider text-muted-foreground p-4 md:p-6">FEATURE</th>
+                <th className="text-center font-orbitron text-[10px] tracking-wider p-4 md:p-6">
+                  <span className="gradient-text">ART SOFTWARES</span>
+                </th>
+                <th className="text-center font-orbitron text-[10px] tracking-wider text-muted-foreground p-4 md:p-6">OTHERS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { feature: "Win Rate", us: "87.3%", them: "~55%" },
+                { feature: "AI-Powered", us: "✓", them: "Limited" },
+                { feature: "24/7 Uptime", us: "✓", them: "Varies" },
+                { feature: "Multi-Exchange", us: "8+ Exchanges", them: "1-2" },
+                { feature: "Setup Time", us: "< 24 Hours", them: "Days" },
+                { feature: "Support", us: "24/7 Priority", them: "Email Only" },
+              ].map((row, i) => (
+                <tr key={i} className="border-b border-border/10 last:border-0">
+                  <td className="p-4 md:p-6 font-orbitron text-xs tracking-wider text-muted-foreground">{row.feature}</td>
+                  <td className="p-4 md:p-6 text-center font-orbitron text-xs tracking-wider text-foreground">{row.us}</td>
+                  <td className="p-4 md:p-6 text-center text-xs text-muted-foreground/60">{row.them}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </motion.div>
+      </div>
+    </section>
+
+    {/* FAQ */}
+    <section className="py-24 px-6">
+      <div className="max-w-3xl mx-auto">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <Award size={16} className="text-muted-foreground" />
+          <span className="font-orbitron text-[10px] tracking-[0.5em] text-muted-foreground">QUESTIONS</span>
+        </div>
+        <h2 className="font-orbitron text-2xl md:text-3xl gradient-text text-center mb-16">FREQUENTLY ASKED</h2>
+
+        <div className="space-y-4">
+          {[
+            { q: "How do the trading bots work?", a: "Our AI bots analyze market data in real-time using proprietary algorithms. They execute trades automatically on your connected exchange account based on high-probability signals." },
+            { q: "What is the expected ROI?", a: "While past performance doesn't guarantee future results, our bots have maintained an average 87.3% win rate with monthly returns ranging from 15-40% depending on market conditions." },
+            { q: "How do I get started?", a: "Simply choose a bot from our collection, complete payment via Binance Pay, and our team will activate your bot within 24 hours. No coding or technical knowledge required." },
+            { q: "Is my investment secure?", a: "Your funds stay in your own exchange account. Our bots only have trading permissions — they cannot withdraw funds. All connections are encrypted with bank-grade security." },
+            { q: "Can I cancel anytime?", a: "Yes. All our plans are flexible with no long-term commitments. You can pause or cancel your bot at any time through our support team." },
+          ].map((faq, i) => (
+            <FaqItem key={i} question={faq.q} answer={faq.a} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+
     {/* CTA BANNER */}
     <section className="py-24 px-6 text-center relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent pointer-events-none" />
