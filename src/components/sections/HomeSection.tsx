@@ -498,7 +498,7 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
                 { feature: "Win Rate", us: "87.3%", them: "~55%" },
                 { feature: "AI-Powered", us: "✓", them: "Limited" },
                 { feature: "24/7 Uptime", us: "✓", them: "Varies" },
-                { feature: "Multi-Exchange", us: "8+ Exchanges", them: "1-2" },
+                
                 { feature: "Setup Time", us: "< 24 Hours", them: "Days" },
                 { feature: "Support", us: "24/7 Priority", them: "Email Only" },
               ].map((row, i) => (
