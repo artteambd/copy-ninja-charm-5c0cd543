@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
-import { Shield, Zap, TrendingUp, Lock, BarChart3, Users, Globe, ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { Shield, Zap, TrendingUp, Lock, BarChart3, Users, Globe, ArrowRight, Activity, Cpu, Wifi } from "lucide-react";
 import type { Page } from "../Navbar";
 
 interface HomeSectionProps {
@@ -32,18 +33,97 @@ const features = [
 ];
 
 const liveStats = [
-  { value: "87.3%", label: "Win Rate" },
-  { value: "$2.4M+", label: "Total Profits Generated" },
-  { value: "4,821", label: "Signals Delivered" },
-  { value: "24/7", label: "Bot Uptime" },
+  { value: 87.3, suffix: "%", label: "Win Rate" },
+  { value: 2.4, prefix: "$", suffix: "M+", label: "Total Profits Generated" },
+  { value: 4821, suffix: "", label: "Signals Delivered" },
+  { value: null, display: "24/7", label: "Bot Uptime" },
 ];
+
+const tickerItems = [
+  { pair: "BTC/USDT", change: "+3.42%", positive: true },
+  { pair: "ETH/USDT", change: "+1.87%", positive: true },
+  { pair: "SOL/USDT", change: "+5.21%", positive: true },
+  { pair: "BNB/USDT", change: "-0.34%", positive: false },
+  { pair: "XRP/USDT", change: "+2.15%", positive: true },
+  { pair: "ADA/USDT", change: "+0.98%", positive: true },
+  { pair: "DOGE/USDT", change: "+4.56%", positive: true },
+  { pair: "AVAX/USDT", change: "-1.12%", positive: false },
+];
+
+/* Animated counter hook */
+const AnimatedCounter = ({ value, prefix = "", suffix = "" }: { value: number; prefix?: string; suffix?: string }) => {
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (v) =>
+    value < 100 ? v.toFixed(1) : Math.round(v).toLocaleString()
+  );
+  const [display, setDisplay] = useState("0");
+
+  useEffect(() => {
+    const unsub = rounded.on("change", setDisplay);
+    const controls = animate(count, value, { duration: 2, ease: "easeOut" });
+    return () => { unsub(); controls.stop(); };
+  }, [value, count, rounded]);
+
+  return <span>{prefix}{display}{suffix}</span>;
+};
 
 const HomeSection = ({ onNavigate }: HomeSectionProps) => (
   <div className="relative">
+    {/* SCROLLING TICKER */}
+    <div className="relative overflow-hidden border-b border-border/20 py-2">
+      <motion.div
+        className="flex gap-8 whitespace-nowrap"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      >
+        {[...tickerItems, ...tickerItems].map((t, i) => (
+          <span key={i} className="flex items-center gap-2 font-orbitron text-[10px] tracking-wider">
+            <Activity size={10} className="text-muted-foreground" />
+            <span className="text-muted-foreground">{t.pair}</span>
+            <span className={t.positive ? "text-emerald-400" : "text-red-400"}>{t.change}</span>
+          </span>
+        ))}
+      </motion.div>
+    </div>
+
     {/* HERO */}
     <section className="min-h-screen flex flex-col items-center justify-center text-center px-6 relative">
-      {/* Radial glow behind title */}
+      {/* Radial glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-accent/10 to-transparent rounded-full blur-3xl animate-pulse-glow pointer-events-none" />
+
+      {/* Orbiting rings */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+        <motion.div
+          className="w-[300px] h-[300px] md:w-[500px] md:h-[500px] rounded-full border border-border/10"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+        >
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-muted-foreground/40" />
+        </motion.div>
+      </div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+        <motion.div
+          className="w-[220px] h-[220px] md:w-[380px] md:h-[380px] rounded-full border border-border/5"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        >
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+        </motion.div>
+      </div>
+
+      {/* Status indicator */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-8"
+      >
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+        </span>
+        <span className="font-orbitron text-[9px] tracking-[0.4em] text-muted-foreground">SYSTEMS ONLINE</span>
+      </motion.div>
 
       <motion.p
         initial={{ opacity: 0, y: 20 }}
@@ -54,14 +134,20 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
         Elite Trading Technology
       </motion.p>
 
-      <motion.h1
+      {/* Glitch title effect */}
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="font-orbitron text-4xl md:text-6xl lg:text-7xl font-bold gradient-text mb-4"
+        className="relative mb-4"
       >
-        ART SOFTWARES
-      </motion.h1>
+        <h1 className="font-orbitron text-4xl md:text-6xl lg:text-7xl font-bold gradient-text relative z-10">
+          ART SOFTWARES
+        </h1>
+        <h1 className="font-orbitron text-4xl md:text-6xl lg:text-7xl font-bold text-foreground/5 absolute inset-0 translate-x-[2px] translate-y-[2px]" aria-hidden>
+          ART SOFTWARES
+        </h1>
+      </motion.div>
 
       <motion.p
         initial={{ opacity: 0, y: 20 }}
@@ -72,14 +158,22 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
         Elite AI Trading Signals & Bots
       </motion.p>
 
-      <motion.p
+      {/* Typing effect tagline */}
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.6 }}
-        className="font-orbitron text-[10px] tracking-[0.4em] text-art-grey-500 mb-10"
+        className="flex items-center gap-2 mb-10"
       >
-        PRECISION · PROFIT · POWER
-      </motion.p>
+        <span className="font-orbitron text-[10px] tracking-[0.4em] text-art-grey-500">
+          PRECISION · PROFIT · POWER
+        </span>
+        <motion.span
+          className="inline-block w-[2px] h-3 bg-muted-foreground"
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+        />
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -90,8 +184,9 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
         <button
           onClick={() => onNavigate("BOTS")}
           data-interactive
-          className="glass magnetic-hover px-10 py-4 font-orbitron text-sm tracking-widest text-foreground rounded-lg flex items-center justify-center gap-3 group"
+          className="glass magnetic-hover px-10 py-4 font-orbitron text-sm tracking-widest text-foreground rounded-lg flex items-center justify-center gap-3 group relative overflow-hidden"
         >
+          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
           BROWSE BOTS
           <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
         </button>
@@ -120,8 +215,9 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
       </motion.div>
     </section>
 
-    {/* LIVE STATS BAR */}
-    <section className="py-12 px-6 border-y border-border/20">
+    {/* LIVE STATS BAR with animated counters */}
+    <section className="py-12 px-6 border-y border-border/20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/5 to-transparent pointer-events-none" />
       <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
         {liveStats.map((s, i) => (
           <motion.div
@@ -130,17 +226,61 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
+            className="relative"
           >
-            <p className="font-orbitron text-2xl md:text-3xl text-foreground mb-1">{s.value}</p>
+            <p className="font-orbitron text-2xl md:text-3xl text-foreground mb-1">
+              {s.value !== null ? (
+                <AnimatedCounter value={s.value} prefix={s.prefix} suffix={s.suffix} />
+              ) : (
+                s.display
+              )}
+            </p>
             <p className="text-muted-foreground text-xs tracking-wider">{s.label}</p>
           </motion.div>
         ))}
       </div>
     </section>
 
+    {/* MARQUEE LOGOS / EXCHANGES */}
+    <section className="py-10 border-b border-border/20 overflow-hidden">
+      <p className="text-center font-orbitron text-[10px] tracking-[0.5em] text-muted-foreground mb-6">
+        SUPPORTED EXCHANGES
+      </p>
+      <div className="relative">
+        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background to-transparent z-10" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background to-transparent z-10" />
+        <motion.div
+          className="flex gap-12 items-center whitespace-nowrap"
+          animate={{ x: ["0%", "-50%"] }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+        >
+          {[...Array(2)].flatMap((_, setIdx) =>
+            ["BINANCE", "BYBIT", "OKX", "KUCOIN", "GATE.IO", "MEXC", "BITGET", "HTX"].map((name, i) => (
+              <span
+                key={`${setIdx}-${i}`}
+                className="font-orbitron text-sm tracking-[0.3em] text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+              >
+                {name}
+              </span>
+            ))
+          )}
+        </motion.div>
+      </div>
+    </section>
+
     {/* FEATURES */}
     <section className="py-24 px-6">
       <div className="max-w-5xl mx-auto text-center mb-16">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="flex items-center justify-center gap-3 mb-4"
+        >
+          <Cpu size={16} className="text-muted-foreground" />
+          <span className="font-orbitron text-[10px] tracking-[0.5em] text-muted-foreground">CORE TECHNOLOGY</span>
+          <Cpu size={16} className="text-muted-foreground" />
+        </motion.div>
         <h2 className="font-orbitron text-2xl md:text-3xl gradient-text mb-4">WHY ART SOFTWARES</h2>
         <p className="text-muted-foreground max-w-lg mx-auto">
           Built by traders, for traders. Every tool is engineered for one purpose — your edge in the market.
@@ -155,31 +295,92 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.15 }}
-            className="glass rounded-2xl p-8 magnetic-hover"
+            className="glass rounded-2xl p-8 magnetic-hover group relative overflow-hidden"
           >
-            <f.icon size={28} className="text-art-grey-600 mb-4" />
-            <h3 className="font-orbitron text-sm tracking-wider mb-3">{f.title}</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
+            {/* Hover shine */}
+            <span className="absolute inset-0 bg-gradient-to-br from-foreground/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative z-10">
+              <div className="w-12 h-12 rounded-xl glass-strong flex items-center justify-center mb-4">
+                <f.icon size={22} className="text-art-grey-600" />
+              </div>
+              <h3 className="font-orbitron text-sm tracking-wider mb-3">{f.title}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">{f.desc}</p>
+            </div>
           </motion.div>
         ))}
+      </div>
+    </section>
+
+    {/* LIVE SIGNAL FEED */}
+    <section className="py-16 px-6 border-y border-border/20">
+      <div className="max-w-3xl mx-auto">
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <Wifi size={14} className="text-emerald-400" />
+          <span className="font-orbitron text-[10px] tracking-[0.5em] text-muted-foreground">LIVE SIGNAL FEED</span>
+        </div>
+        <div className="space-y-3">
+          {[
+            { pair: "BTC/USDT", type: "LONG", entry: "$67,420", tp: "$69,800", time: "2m ago", status: "active" },
+            { pair: "ETH/USDT", type: "LONG", entry: "$3,512", tp: "$3,680", time: "8m ago", status: "tp-hit" },
+            { pair: "SOL/USDT", type: "SHORT", entry: "$178.50", tp: "$172.00", time: "15m ago", status: "tp-hit" },
+          ].map((signal, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.15 }}
+              className="glass rounded-xl px-6 py-4 flex items-center justify-between gap-4 flex-wrap"
+            >
+              <div className="flex items-center gap-3">
+                <span className={`font-orbitron text-[10px] px-2 py-0.5 rounded ${
+                  signal.type === "LONG" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"
+                }`}>
+                  {signal.type}
+                </span>
+                <span className="font-orbitron text-sm tracking-wider">{signal.pair}</span>
+              </div>
+              <div className="flex items-center gap-6 text-xs text-muted-foreground">
+                <span>Entry: <span className="text-foreground">{signal.entry}</span></span>
+                <span>TP: <span className="text-foreground">{signal.tp}</span></span>
+                <span className={`font-orbitron text-[9px] px-2 py-0.5 rounded-full ${
+                  signal.status === "active"
+                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                    : "bg-foreground/5 text-muted-foreground border border-border/30"
+                }`}>
+                  {signal.status === "active" ? "● ACTIVE" : "✓ TP HIT"}
+                </span>
+              </div>
+              <span className="text-[10px] text-muted-foreground">{signal.time}</span>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
 
     {/* CTA BANNER */}
     <section className="py-24 px-6 text-center relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent/5 to-transparent pointer-events-none" />
-      <h3 className="font-orbitron text-xl md:text-2xl gradient-text mb-4 relative z-10">READY TO TRADE SMARTER?</h3>
-      <p className="text-muted-foreground mb-8 max-w-md mx-auto relative z-10">
-        Get started with our AI-powered bots and join thousands of profitable traders worldwide.
-      </p>
-      <button
-        onClick={() => onNavigate("BOTS")}
-        data-interactive
-        className="glass magnetic-hover px-10 py-4 font-orbitron text-sm tracking-widest text-foreground rounded-lg relative z-10 inline-flex items-center gap-3 group"
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        className="relative z-10"
       >
-        GET STARTED
-        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-      </button>
+        <h3 className="font-orbitron text-xl md:text-2xl gradient-text mb-4">READY TO TRADE SMARTER?</h3>
+        <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+          Get started with our AI-powered bots and join thousands of profitable traders worldwide.
+        </p>
+        <button
+          onClick={() => onNavigate("BOTS")}
+          data-interactive
+          className="glass magnetic-hover px-10 py-4 font-orbitron text-sm tracking-widest text-foreground rounded-lg inline-flex items-center gap-3 group relative overflow-hidden"
+        >
+          <span className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+          GET STARTED
+          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+        </button>
+      </motion.div>
     </section>
   </div>
 );
