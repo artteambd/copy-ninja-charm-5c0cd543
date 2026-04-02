@@ -277,32 +277,6 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
       </div>
     </section>
 
-    {/* MARQUEE LOGOS / EXCHANGES */}
-    <section className="py-10 border-b border-border/20 overflow-hidden">
-      <p className="text-center font-orbitron text-[10px] tracking-[0.5em] text-muted-foreground mb-6">
-        SUPPORTED EXCHANGES
-      </p>
-      <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-background to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-background to-transparent z-10" />
-        <motion.div
-          className="flex gap-12 items-center whitespace-nowrap"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        >
-          {[...Array(2)].flatMap((_, setIdx) =>
-            ["BINANCE", "BYBIT", "OKX", "KUCOIN", "GATE.IO", "MEXC", "BITGET", "HTX"].map((name, i) => (
-              <span
-                key={`${setIdx}-${i}`}
-                className="font-orbitron text-sm tracking-[0.3em] text-muted-foreground/40 hover:text-muted-foreground transition-colors"
-              >
-                {name}
-              </span>
-            ))
-          )}
-        </motion.div>
-      </div>
-    </section>
 
     {/* FEATURES */}
     <section className="py-24 px-6">

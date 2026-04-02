@@ -20,7 +20,7 @@ const Navbar = ({ activePage, onNavigate }: NavbarProps) => {
           onClick={() => onNavigate("HOME")}
           className="font-orbitron text-lg tracking-[0.3em] text-foreground"
         >
-          ART
+          ART SOFTWARES
         </button>
 
         {/* Desktop nav */}
