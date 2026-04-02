@@ -229,31 +229,6 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
       </motion.div>
     </section>
 
-    {/* LIVE STATS BAR with animated counters */}
-    <section className="py-12 px-6 border-y border-border/20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/5 to-transparent pointer-events-none" />
-      <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-        {liveStats.map((s, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="relative"
-          >
-            <p className="font-orbitron text-2xl md:text-3xl text-foreground mb-1">
-              {s.value !== null ? (
-                <AnimatedCounter value={s.value} prefix={s.prefix} suffix={s.suffix} />
-              ) : (
-                s.display
-              )}
-            </p>
-            <p className="text-muted-foreground text-xs tracking-wider">{s.label}</p>
-          </motion.div>
-        ))}
-      </div>
-    </section>
 
 
     {/* FEATURES */}
