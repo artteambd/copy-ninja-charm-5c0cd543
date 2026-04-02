@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { Shield, Zap, TrendingUp, Lock, BarChart3, Users, Globe, ArrowRight, Activity, Cpu, Target, Clock, Rocket, ChevronRight, Star, MessageSquare, Award, Layers } from "lucide-react";
 import type { Page } from "../Navbar";
 
@@ -32,12 +32,6 @@ const features = [
   },
 ];
 
-const liveStats = [
-  { value: 87.3, suffix: "%", label: "Win Rate" },
-  { value: 2.4, prefix: "$", suffix: "M+", label: "Total Profits Generated" },
-  { value: 4821, suffix: "", label: "Signals Delivered" },
-  { value: null, display: "24/7", label: "Bot Uptime" },
-];
 
 const tickerItems = [
   { pair: "BTC/USDT", change: "+3.42%", positive: true },
@@ -50,22 +44,6 @@ const tickerItems = [
   { pair: "AVAX/USDT", change: "-1.12%", positive: false },
 ];
 
-/* Animated counter hook */
-const AnimatedCounter = ({ value, prefix = "", suffix = "" }: { value: number; prefix?: string; suffix?: string }) => {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (v) =>
-    value < 100 ? v.toFixed(1) : Math.round(v).toLocaleString()
-  );
-  const [display, setDisplay] = useState("0");
-
-  useEffect(() => {
-    const unsub = rounded.on("change", setDisplay);
-    const controls = animate(count, value, { duration: 2, ease: "easeOut" });
-    return () => { unsub(); controls.stop(); };
-  }, [value, count, rounded]);
-
-  return <span>{prefix}{display}{suffix}</span>;
-};
 
 const FaqItem = ({ question, answer, index }: { question: string; answer: string; index: number }) => {
   const [open, setOpen] = useState(false);
@@ -251,31 +229,6 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
       </motion.div>
     </section>
 
-    {/* LIVE STATS BAR with animated counters */}
-    <section className="py-12 px-6 border-y border-border/20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/5 to-transparent pointer-events-none" />
-      <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-        {liveStats.map((s, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="relative"
-          >
-            <p className="font-orbitron text-2xl md:text-3xl text-foreground mb-1">
-              {s.value !== null ? (
-                <AnimatedCounter value={s.value} prefix={s.prefix} suffix={s.suffix} />
-              ) : (
-                s.display
-              )}
-            </p>
-            <p className="text-muted-foreground text-xs tracking-wider">{s.label}</p>
-          </motion.div>
-        ))}
-      </div>
-    </section>
 
 
     {/* FEATURES */}
@@ -405,16 +358,19 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
 
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { name: "Alex M.", role: "Crypto Trader", text: "ARTRIX AI completely changed my trading game. 87% win rate is no joke — I've tripled my portfolio in 3 months.", stars: 5, profit: "+320%" },
-            { name: "Sarah K.", role: "Day Trader", text: "The signals are incredibly accurate. I was skeptical at first but the results speak for themselves. Best investment I've made.", stars: 5, profit: "+185%" },
-            { name: "David R.", role: "Swing Trader", text: "TWJ LIVE bot runs 24/7 and I wake up to profits every morning. The team support is also top-notch.", stars: 5, profit: "+240%" },
+            { name: "Rafiqul Islam", role: "Futures Trader", text: "ARTRIX AI completely changed my trading game. The win rate is unbelievable — I've tripled my portfolio in just 3 months. Best decision ever!", stars: 5, profit: "+320%" },
+            { name: "Tanvir Hasan", role: "Spot Trader", text: "The signals are incredibly accurate. I was skeptical at first but the results speak for themselves. My profits have been consistent every week.", stars: 5, profit: "+185%" },
+            { name: "Mahmudul Haque", role: "Swing Trader", text: "TWJ LIVE bot runs 24/7 and I wake up to profits every morning. The team support is also top-notch. Highly recommended!", stars: 5, profit: "+240%" },
+            { name: "Shakib Rahman", role: "Day Trader", text: "I've tried many bots before but nothing comes close to ART SOFTWARES. The accuracy and speed are unmatched. My best month was +45% profit.", stars: 5, profit: "+290%" },
+            { name: "Nayeem Uddin", role: "Crypto Investor", text: "As a beginner, I was worried about automated trading. But ART made it so easy. The bot handles everything and I just watch my balance grow.", stars: 5, profit: "+150%" },
+            { name: "Imran Hossain", role: "Full-Time Trader", text: "I quit my job because ART bots generate more income than my salary ever did. The consistency is what impressed me the most. Life-changing!", stars: 5, profit: "+410%" },
           ].map((t, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
+              transition={{ delay: i * 0.1 }}
               className="glass rounded-2xl p-6 magnetic-hover group relative overflow-hidden"
             >
               <span className="absolute inset-0 bg-gradient-to-br from-foreground/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
