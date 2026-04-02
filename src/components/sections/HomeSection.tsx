@@ -44,22 +44,6 @@ const tickerItems = [
   { pair: "AVAX/USDT", change: "-1.12%", positive: false },
 ];
 
-/* Animated counter hook */
-const AnimatedCounter = ({ value, prefix = "", suffix = "" }: { value: number; prefix?: string; suffix?: string }) => {
-  const count = useMotionValue(0);
-  const rounded = useTransform(count, (v) =>
-    value < 100 ? v.toFixed(1) : Math.round(v).toLocaleString()
-  );
-  const [display, setDisplay] = useState("0");
-
-  useEffect(() => {
-    const unsub = rounded.on("change", setDisplay);
-    const controls = animate(count, value, { duration: 2, ease: "easeOut" });
-    return () => { unsub(); controls.stop(); };
-  }, [value, count, rounded]);
-
-  return <span>{prefix}{display}{suffix}</span>;
-};
 
 const FaqItem = ({ question, answer, index }: { question: string; answer: string; index: number }) => {
   const [open, setOpen] = useState(false);
