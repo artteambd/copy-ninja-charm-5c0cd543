@@ -32,12 +32,6 @@ const features = [
   },
 ];
 
-const liveStats = [
-  { value: 87.3, suffix: "%", label: "Win Rate" },
-  { value: 2.4, prefix: "$", suffix: "M+", label: "Total Profits Generated" },
-  { value: 4821, suffix: "", label: "Signals Delivered" },
-  { value: null, display: "24/7", label: "Bot Uptime" },
-];
 
 const tickerItems = [
   { pair: "BTC/USDT", change: "+3.42%", positive: true },
