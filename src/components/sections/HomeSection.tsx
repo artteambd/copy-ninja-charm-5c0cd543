@@ -358,16 +358,19 @@ const HomeSection = ({ onNavigate }: HomeSectionProps) => (
 
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { name: "Alex M.", role: "Crypto Trader", text: "ARTRIX AI completely changed my trading game. 87% win rate is no joke — I've tripled my portfolio in 3 months.", stars: 5, profit: "+320%" },
-            { name: "Sarah K.", role: "Day Trader", text: "The signals are incredibly accurate. I was skeptical at first but the results speak for themselves. Best investment I've made.", stars: 5, profit: "+185%" },
-            { name: "David R.", role: "Swing Trader", text: "TWJ LIVE bot runs 24/7 and I wake up to profits every morning. The team support is also top-notch.", stars: 5, profit: "+240%" },
+            { name: "Rafiqul Islam", role: "Futures Trader", text: "ARTRIX AI completely changed my trading game. The win rate is unbelievable — I've tripled my portfolio in just 3 months. Best decision ever!", stars: 5, profit: "+320%" },
+            { name: "Tanvir Hasan", role: "Spot Trader", text: "The signals are incredibly accurate. I was skeptical at first but the results speak for themselves. My profits have been consistent every week.", stars: 5, profit: "+185%" },
+            { name: "Mahmudul Haque", role: "Swing Trader", text: "TWJ LIVE bot runs 24/7 and I wake up to profits every morning. The team support is also top-notch. Highly recommended!", stars: 5, profit: "+240%" },
+            { name: "Shakib Rahman", role: "Day Trader", text: "I've tried many bots before but nothing comes close to ART SOFTWARES. The accuracy and speed are unmatched. My best month was +45% profit.", stars: 5, profit: "+290%" },
+            { name: "Nayeem Uddin", role: "Crypto Investor", text: "As a beginner, I was worried about automated trading. But ART made it so easy. The bot handles everything and I just watch my balance grow.", stars: 5, profit: "+150%" },
+            { name: "Imran Hossain", role: "Full-Time Trader", text: "I quit my job because ART bots generate more income than my salary ever did. The consistency is what impressed me the most. Life-changing!", stars: 5, profit: "+410%" },
           ].map((t, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
+              transition={{ delay: i * 0.1 }}
               className="glass rounded-2xl p-6 magnetic-hover group relative overflow-hidden"
             >
               <span className="absolute inset-0 bg-gradient-to-br from-foreground/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
