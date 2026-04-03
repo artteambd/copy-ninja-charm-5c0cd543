@@ -1,36 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, Check, Copy, Star, Shield, Clock, Zap, Package,
   ShoppingCart, BadgeCheck, Flame, Heart, Share2, Eye, ChevronRight,
-  TrendingUp, Award, Users
+  TrendingUp, Award, Users, Upload, ImageIcon, X, Wallet, CreditCard
 } from "lucide-react";
 import { bots } from "@/data/bots";
 import CustomCursor from "@/components/CustomCursor";
 import ParticleCanvas from "@/components/ParticleCanvas";
 
-const BINANCE_ID = "bc1qxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+const BINANCE_ID = "849850742";
 
 const reviews = [
-  { name: "Sabbir Ahmed", rating: 5, text: "Best bot I've ever used. Profits are insane!", date: "2 days ago" },
-  { name: "Nayeem Hasan", rating: 5, text: "Consistent profits every single week. Highly recommended.", date: "5 days ago" },
-  { name: "Kamrul Islam", rating: 4, text: "Very good signals, support team is responsive too.", date: "1 week ago" },
-  { name: "Fahim Rana", rating: 5, text: "Changed my life. I'm making more than my salary now.", date: "2 weeks ago" },
-  { name: "Ariful Hossain", rating: 5, text: "I was skeptical but this bot proved me wrong. Amazing!", date: "3 weeks ago" },
-  { name: "Rakibul Hasan", rating: 5, text: "Easy setup, great results. What more can you ask for?", date: "1 month ago" },
+  { name: "Sabbir Ahmed", rating: 5, text: "Best bot I've ever used. Profits are insane!", date: "2 days ago", profit: "+320%" },
+  { name: "Nayeem Hasan", rating: 5, text: "Consistent profits every single week. Highly recommended.", date: "5 days ago", profit: "+185%" },
+  { name: "Kamrul Islam", rating: 4, text: "Very good signals, support team is responsive too.", date: "1 week ago", profit: "+150%" },
+  { name: "Fahim Rana", rating: 5, text: "Changed my life. I'm making more than my salary now.", date: "2 weeks ago", profit: "+410%" },
+  { name: "Ariful Hossain", rating: 5, text: "I was skeptical but this bot proved me wrong. Amazing!", date: "3 weeks ago", profit: "+240%" },
+  { name: "Rakibul Hasan", rating: 5, text: "Easy setup, great results. What more can you ask for?", date: "1 month ago", profit: "+175%" },
 ];
 
 const BotDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const bot = bots.find((b) => b.slug === slug);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<"detail" | "payment" | "success">("detail");
-  const [txId, setTxId] = useState("");
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "performance" | "reviews">("overview");
+  const [txPhoto, setTxPhoto] = useState<string | null>(null);
+  const [txFileName, setTxFileName] = useState("");
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -57,8 +59,18 @@ const BotDetail = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setTxFileName(file.name);
+      const reader = new FileReader();
+      reader.onload = (ev) => setTxPhoto(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = () => {
-    if (txId.trim()) setStep("success");
+    if (txPhoto) setStep("success");
   };
 
   return (
@@ -66,7 +78,7 @@ const BotDetail = () => {
       <CustomCursor />
       <ParticleCanvas />
 
-      {/* Top Nav Bar */}
+      {/* Top Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-strong">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <button data-interactive onClick={() => navigate("/")} className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors">
@@ -74,7 +86,10 @@ const BotDetail = () => {
             <span className="font-orbitron text-[11px] tracking-[0.2em]">BACK TO STORE</span>
           </button>
           <span className="font-orbitron text-lg tracking-[0.3em] text-foreground">ART SOFTWARES</span>
-          <div className="w-24" />
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-orbitron text-[9px] tracking-wider text-muted-foreground hidden md:inline">ONLINE</span>
+          </div>
         </div>
       </nav>
 
@@ -82,25 +97,17 @@ const BotDetail = () => {
         <AnimatePresence mode="wait">
           {step === "detail" && (
             <motion.div key="detail" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.3 }}>
-              {/* Hero Image Section */}
-              <div className="relative h-[50vh] md:h-[60vh] overflow-hidden">
-                <motion.img
-                  initial={{ scale: 1.1 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 1.5, ease: "easeOut" }}
-                  src={bot.image}
-                  alt={bot.name}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-                <div className={`absolute inset-0 bg-gradient-to-br ${bot.accent} opacity-20 mix-blend-overlay`} />
+              {/* Hero */}
+              <div className="relative h-[45vh] md:h-[55vh] overflow-hidden">
+                <motion.img initial={{ scale: 1.1 }} animate={{ scale: 1 }} transition={{ duration: 1.5, ease: "easeOut" }}
+                  src={bot.image} alt={bot.name} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/20" />
+                <div className={`absolute inset-0 bg-gradient-to-br ${bot.accent} opacity-15 mix-blend-overlay`} />
 
-                {/* Floating badges */}
                 {bot.tag && (
                   <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }}
                     className="absolute top-6 left-6 flex items-center gap-1.5 font-orbitron text-[9px] tracking-[0.3em] px-4 py-2 rounded-full bg-background/60 backdrop-blur-md text-foreground border border-border/20">
-                    <Flame size={11} className="text-amber-400" />
-                    {bot.tag}
+                    <Flame size={11} className="text-amber-400" /> {bot.tag}
                   </motion.div>
                 )}
 
@@ -116,18 +123,17 @@ const BotDetail = () => {
 
                 <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}
                   className="absolute bottom-6 left-6 flex items-center gap-1.5 text-[9px] font-orbitron tracking-wider bg-emerald-500/20 backdrop-blur-md text-emerald-400 px-4 py-2 rounded-full border border-emerald-500/20">
-                  <BadgeCheck size={12} />
-                  VERIFIED PRODUCT
+                  <BadgeCheck size={12} /> VERIFIED PRODUCT
                 </motion.div>
               </div>
 
               {/* Product Content */}
-              <div className="max-w-6xl mx-auto px-6 -mt-20 relative z-20">
+              <div className="max-w-6xl mx-auto px-6 -mt-16 relative z-20">
                 <div className="grid lg:grid-cols-3 gap-8">
-                  {/* Main Content */}
-                  <div className="lg:col-span-2">
+                  {/* Main */}
+                  <div className="lg:col-span-2 space-y-6">
                     {/* Breadcrumb */}
-                    <div className="flex items-center gap-2 text-[9px] font-orbitron tracking-wider text-muted-foreground mb-6">
+                    <div className="flex items-center gap-2 text-[9px] font-orbitron tracking-wider text-muted-foreground">
                       <button data-interactive onClick={() => navigate("/")} className="hover:text-foreground transition-colors">STORE</button>
                       <ChevronRight size={9} />
                       <span>TRADING BOTS</span>
@@ -135,33 +141,44 @@ const BotDetail = () => {
                       <span className="text-foreground">{bot.name}</span>
                     </div>
 
-                    {/* Title & Rating */}
+                    {/* Title */}
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-                      <div className="flex items-start gap-4 mb-4">
+                      <div className="flex items-start gap-4">
                         <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${bot.accent} flex items-center justify-center border border-border/20 shrink-0`}>
                           <Icon size={24} className="text-foreground" />
                         </div>
                         <div>
-                          <h1 className="font-orbitron text-2xl md:text-4xl tracking-wider text-foreground leading-tight gradient-text">
-                            {bot.name}
-                          </h1>
-                          <div className="flex items-center gap-3 mt-2">
+                          <h1 className="font-orbitron text-2xl md:text-4xl tracking-wider leading-tight gradient-text">{bot.name}</h1>
+                          <div className="flex items-center gap-3 mt-2 flex-wrap">
                             <div className="flex items-center gap-0.5">
                               {Array.from({ length: 5 }).map((_, i) => (
                                 <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
                               ))}
                             </div>
                             <span className="text-xs text-muted-foreground">(4.9 · 128 reviews)</span>
-                            <span className="text-[9px] text-muted-foreground flex items-center gap-1">
-                              <Eye size={10} /> 47 viewing
-                            </span>
+                            <span className="text-[9px] text-muted-foreground flex items-center gap-1"><Eye size={10} /> 47 viewing</span>
                           </div>
                         </div>
                       </div>
                     </motion.div>
 
+                    {/* Stats Bar */}
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+                      className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {bot.results.map((r, i) => (
+                        <div key={r.label} className="relative rounded-2xl overflow-hidden text-center py-5">
+                          <div className={`absolute inset-0 bg-gradient-to-b ${bot.accent} opacity-25`} />
+                          <div className="absolute inset-[1px] rounded-[15px] bg-card/90" />
+                          <div className="relative z-10">
+                            <p className="font-orbitron text-xl text-foreground mb-0.5">{r.value}</p>
+                            <p className="text-[8px] font-orbitron tracking-[0.15em] text-muted-foreground">{r.label}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </motion.div>
+
                     {/* Tabs */}
-                    <div className="flex gap-0 border-b border-border/10 mt-8 mb-6">
+                    <div className="flex gap-0 border-b border-border/10">
                       {(["overview", "performance", "reviews"] as const).map((tab) => (
                         <button key={tab} data-interactive onClick={() => setActiveTab(tab)}
                           className={`px-5 py-3 font-orbitron text-[10px] tracking-[0.15em] transition-all border-b-2 -mb-px ${
@@ -172,12 +189,10 @@ const BotDetail = () => {
                       ))}
                     </div>
 
-                    {/* Tab Content */}
                     <AnimatePresence mode="wait">
                       {activeTab === "overview" && (
                         <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
                           <p className="text-muted-foreground leading-relaxed">{bot.desc}</p>
-
                           <div className="grid grid-cols-2 gap-4">
                             {[
                               { icon: Shield, title: "Secure & Encrypted", desc: "Bank-grade encryption on all connections" },
@@ -185,24 +200,19 @@ const BotDetail = () => {
                               { icon: Zap, title: "Real-Time Engine", desc: "Execute trades in milliseconds" },
                               { icon: Package, title: "Lifetime Updates", desc: "All future improvements included free" },
                             ].map(({ icon: I, title, desc }) => (
-                              <div key={title} className="glass rounded-xl p-4 group magnetic-hover">
+                              <div key={title} className="glass rounded-xl p-4 magnetic-hover">
                                 <div className="flex items-center gap-3 mb-2">
-                                  <div className="w-8 h-8 rounded-lg glass-strong flex items-center justify-center">
-                                    <I size={14} className="text-foreground" />
-                                  </div>
+                                  <div className="w-8 h-8 rounded-lg glass-strong flex items-center justify-center"><I size={14} className="text-foreground" /></div>
                                   <span className="font-orbitron text-[10px] tracking-wider">{title}</span>
                                 </div>
                                 <p className="text-xs text-muted-foreground">{desc}</p>
                               </div>
                             ))}
                           </div>
-
-                          {/* Features list */}
                           <div className="flex flex-wrap gap-2">
                             {bot.features.map((f) => (
                               <span key={f} className="inline-flex items-center gap-1.5 text-[10px] font-orbitron tracking-wider px-4 py-2 rounded-full bg-secondary/40 text-secondary-foreground border border-border/10">
-                                <Check size={10} className="text-emerald-400" />
-                                {f}
+                                <Check size={10} className="text-emerald-400" /> {f}
                               </span>
                             ))}
                           </div>
@@ -210,21 +220,7 @@ const BotDetail = () => {
                       )}
 
                       {activeTab === "performance" && (
-                        <motion.div key="performance" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                            {bot.results.map((r, i) => (
-                              <motion.div key={r.label} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.08 }}
-                                className="relative rounded-2xl overflow-hidden text-center py-6">
-                                <div className={`absolute inset-0 bg-gradient-to-b ${bot.accent} opacity-30`} />
-                                <div className="absolute inset-[1px] rounded-[15px] bg-card/90" />
-                                <div className="relative z-10">
-                                  <p className="font-orbitron text-2xl text-foreground mb-1">{r.value}</p>
-                                  <p className="text-[9px] font-orbitron tracking-[0.15em] text-muted-foreground">{r.label}</p>
-                                </div>
-                              </motion.div>
-                            ))}
-                          </div>
-
+                        <motion.div key="performance" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
                           <div className="glass rounded-2xl p-6">
                             <h3 className="font-orbitron text-xs tracking-wider mb-4">PERFORMANCE HIGHLIGHTS</h3>
                             <div className="space-y-3">
@@ -234,8 +230,7 @@ const BotDetail = () => {
                                 { icon: Users, text: "Trusted by 1,200+ active traders worldwide" },
                               ].map(({ icon: I, text }) => (
                                 <div key={text} className="flex items-center gap-3 text-sm text-muted-foreground">
-                                  <I size={14} className="text-foreground shrink-0" />
-                                  {text}
+                                  <I size={14} className="text-foreground shrink-0" /> {text}
                                 </div>
                               ))}
                             </div>
@@ -262,9 +257,12 @@ const BotDetail = () => {
                                     </div>
                                   </div>
                                 </div>
-                                <span className="text-[9px] text-muted-foreground">{r.date}</span>
+                                <div className="flex items-center gap-3">
+                                  <span className="font-orbitron text-[9px] tracking-wider text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">{r.profit}</span>
+                                  <span className="text-[9px] text-muted-foreground">{r.date}</span>
+                                </div>
                               </div>
-                              <p className="text-sm text-muted-foreground ml-11">{r.text}</p>
+                              <p className="text-sm text-muted-foreground ml-11">"{r.text}"</p>
                             </motion.div>
                           ))}
                         </motion.div>
@@ -272,55 +270,65 @@ const BotDetail = () => {
                     </AnimatePresence>
                   </div>
 
-                  {/* Sidebar - Purchase Card */}
+                  {/* Sidebar */}
                   <div className="lg:col-span-1">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                      className="sticky top-24 glass-strong rounded-3xl p-6 space-y-5">
-                      {/* Price */}
-                      <div className="text-center pb-5 border-b border-border/10">
-                        <p className="text-[9px] font-orbitron tracking-[0.3em] text-muted-foreground mb-2">PRICE</p>
-                        <div className="flex items-baseline justify-center gap-2">
-                          <span className="font-orbitron text-4xl text-foreground">${bot.price}</span>
-                          <span className="text-sm text-muted-foreground line-through">${Math.round(bot.price * 1.5)}</span>
-                        </div>
-                        <span className="inline-block mt-2 text-[9px] font-orbitron tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                          -33% OFF
-                        </span>
-                      </div>
-
-                      {/* Quick Info */}
-                      <div className="space-y-3">
-                        {bot.results.slice(0, 2).map((r) => (
-                          <div key={r.label} className="flex items-center justify-between">
-                            <span className="text-xs text-muted-foreground">{r.label}</span>
-                            <span className="font-orbitron text-sm text-foreground">{r.value}</span>
+                      className="sticky top-24 glass-strong rounded-3xl overflow-hidden">
+                      {/* Price Header */}
+                      <div className={`relative p-6 text-center`}>
+                        <div className={`absolute inset-0 bg-gradient-to-br ${bot.accent} opacity-20`} />
+                        <div className="relative z-10">
+                          <p className="text-[9px] font-orbitron tracking-[0.3em] text-muted-foreground mb-2">PRICE</p>
+                          <div className="flex items-baseline justify-center gap-2">
+                            <span className="font-orbitron text-5xl text-foreground">${bot.price}</span>
+                            <span className="text-sm text-muted-foreground line-through">${Math.round(bot.price * 1.5)}</span>
                           </div>
-                        ))}
+                          <span className="inline-block mt-2 text-[9px] font-orbitron tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                            -33% OFF · LIMITED TIME
+                          </span>
+                        </div>
                       </div>
 
-                      {/* Stock */}
-                      <div className="flex items-center justify-center gap-1.5 text-[10px] text-emerald-400 font-orbitron tracking-wider">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        IN STOCK · INSTANT DELIVERY
-                      </div>
+                      <div className="p-6 pt-0 space-y-5">
+                        {/* Quick stats */}
+                        <div className="space-y-3 pt-5 border-t border-border/10">
+                          {bot.results.slice(0, 2).map((r) => (
+                            <div key={r.label} className="flex items-center justify-between">
+                              <span className="text-xs text-muted-foreground">{r.label}</span>
+                              <span className="font-orbitron text-sm text-foreground">{r.value}</span>
+                            </div>
+                          ))}
+                        </div>
 
-                      {/* Buy Button */}
-                      <button data-interactive onClick={() => setStep("payment")}
-                        className="relative w-full py-4 rounded-2xl font-orbitron text-xs tracking-[0.25em] text-foreground overflow-hidden group">
-                        <div className={`absolute inset-0 bg-gradient-to-r ${bot.accent}`} />
-                        <div className="absolute inset-[1px] rounded-[15px] bg-card/70 group-hover:bg-card/40 transition-colors duration-300" />
-                        <span className="relative z-10 flex items-center justify-center gap-3">
-                          <ShoppingCart size={15} />
-                          BUY NOW
-                          <ArrowRight size={15} />
-                        </span>
-                      </button>
+                        {/* Stock */}
+                        <div className="flex items-center justify-center gap-1.5 text-[10px] text-emerald-400 font-orbitron tracking-wider py-2 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          IN STOCK · INSTANT DELIVERY
+                        </div>
 
-                      {/* Trust */}
-                      <div className="flex items-center justify-center gap-4 text-[8px] text-muted-foreground font-orbitron tracking-wider">
-                        <span className="flex items-center gap-1"><Shield size={9} /> SECURE</span>
-                        <span className="flex items-center gap-1"><Clock size={9} /> 24H</span>
-                        <span className="flex items-center gap-1"><BadgeCheck size={9} /> VERIFIED</span>
+                        {/* Buy Button */}
+                        <button data-interactive onClick={() => setStep("payment")}
+                          className="relative w-full py-4 rounded-2xl font-orbitron text-xs tracking-[0.25em] text-foreground overflow-hidden group">
+                          <div className={`absolute inset-0 bg-gradient-to-r ${bot.accent}`} />
+                          <div className="absolute inset-[1px] rounded-[15px] bg-card/70 group-hover:bg-card/40 transition-colors duration-300" />
+                          <span className="relative z-10 flex items-center justify-center gap-3">
+                            <ShoppingCart size={15} /> BUY NOW <ArrowRight size={15} />
+                          </span>
+                        </button>
+
+                        {/* Trust */}
+                        <div className="grid grid-cols-3 gap-2">
+                          {[
+                            { icon: Shield, label: "SECURE" },
+                            { icon: Clock, label: "24H SETUP" },
+                            { icon: BadgeCheck, label: "VERIFIED" },
+                          ].map(({ icon: I, label }) => (
+                            <div key={label} className="flex flex-col items-center gap-1 rounded-xl bg-secondary/20 border border-border/10 py-3">
+                              <I size={14} className="text-muted-foreground" />
+                              <span className="text-[7px] font-orbitron tracking-wider text-muted-foreground">{label}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </motion.div>
                   </div>
@@ -336,55 +344,120 @@ const BotDetail = () => {
                 <ArrowLeft size={14} /> BACK TO PRODUCT
               </button>
 
-              <div className="glass-strong rounded-3xl p-8">
-                <h2 className="font-orbitron text-lg tracking-wider mb-6">CHECKOUT</h2>
-
-                {/* Order summary */}
-                <div className="rounded-2xl bg-secondary/20 border border-border/10 p-5 mb-8">
-                  <p className="text-[9px] font-orbitron tracking-[0.3em] text-muted-foreground mb-4">ORDER SUMMARY</p>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 rounded-xl overflow-hidden border border-border/10">
-                      <img src={bot.image} alt={bot.name} className="w-full h-full object-cover" />
+              <div className="glass-strong rounded-3xl overflow-hidden">
+                {/* Checkout Header */}
+                <div className={`relative p-6`}>
+                  <div className={`absolute inset-0 bg-gradient-to-r ${bot.accent} opacity-15`} />
+                  <div className="relative z-10 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl glass-strong flex items-center justify-center">
+                      <CreditCard size={18} className="text-foreground" />
                     </div>
-                    <div className="flex-1">
-                      <p className="font-orbitron text-xs tracking-wider text-foreground">{bot.name}</p>
-                      <p className="text-[9px] text-muted-foreground mt-0.5">1 × ${bot.price}</p>
+                    <div>
+                      <h2 className="font-orbitron text-lg tracking-wider">CHECKOUT</h2>
+                      <p className="text-[9px] font-orbitron tracking-wider text-muted-foreground">SECURE PAYMENT</p>
                     </div>
-                    <p className="font-orbitron text-xl text-foreground">${bot.price}</p>
-                  </div>
-                  <div className="border-t border-border/10 pt-3 flex justify-between">
-                    <span className="font-orbitron text-[9px] tracking-wider text-muted-foreground">TOTAL</span>
-                    <span className="font-orbitron text-sm text-foreground">${bot.price}</span>
                   </div>
                 </div>
 
-                <h3 className="font-orbitron text-sm tracking-wider mb-5">PAYMENT VIA BINANCE</h3>
+                <div className="p-6 pt-0 space-y-6">
+                  {/* Order summary */}
+                  <div className="rounded-2xl bg-secondary/20 border border-border/10 p-5">
+                    <p className="text-[9px] font-orbitron tracking-[0.3em] text-muted-foreground mb-4">ORDER SUMMARY</p>
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-16 h-16 rounded-xl overflow-hidden border border-border/10">
+                        <img src={bot.image} alt={bot.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-orbitron text-xs tracking-wider text-foreground">{bot.name}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          {bot.features.slice(0, 2).map((f) => (
+                            <span key={f} className="text-[8px] text-muted-foreground bg-secondary/40 px-2 py-0.5 rounded-full">{f}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <p className="font-orbitron text-xl text-foreground">${bot.price}</p>
+                    </div>
+                    <div className="border-t border-border/10 pt-3 flex justify-between">
+                      <span className="font-orbitron text-[9px] tracking-wider text-muted-foreground">TOTAL</span>
+                      <span className="font-orbitron text-lg text-foreground">${bot.price}</span>
+                    </div>
+                  </div>
 
-                <p className="text-[9px] text-muted-foreground mb-2 font-orbitron tracking-[0.2em]">BINANCE ID</p>
-                <div className="rounded-xl bg-secondary/20 border border-border/10 p-4 flex items-center justify-between mb-5">
-                  <span className="text-xs text-foreground font-mono break-all">{BINANCE_ID}</span>
-                  <button data-interactive onClick={handleCopy} className="ml-4 flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0">
-                    {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
-                    {copied ? "Copied" : "Copy"}
+                  {/* Payment Method */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Wallet size={14} className="text-foreground" />
+                      <h3 className="font-orbitron text-sm tracking-wider">PAYMENT VIA BINANCE</h3>
+                    </div>
+
+                    <p className="text-[9px] text-muted-foreground mb-2 font-orbitron tracking-[0.2em]">BINANCE PAY ID</p>
+                    <div className="rounded-xl bg-secondary/20 border border-border/10 p-4 flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                          <Wallet size={14} className="text-amber-400" />
+                        </div>
+                        <span className="text-sm text-foreground font-mono font-bold tracking-wider">{BINANCE_ID}</span>
+                      </div>
+                      <button data-interactive onClick={handleCopy}
+                        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5 rounded-lg bg-secondary/30 border border-border/10">
+                        {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                        {copied ? "Copied!" : "Copy"}
+                      </button>
+                    </div>
+                    <p className="text-[8px] text-muted-foreground mb-6">Send exactly <span className="text-foreground font-orbitron">${bot.price}</span> to this Binance Pay ID</p>
+                  </div>
+
+                  {/* Upload Transaction Photo */}
+                  <div>
+                    <p className="text-[9px] text-muted-foreground mb-3 font-orbitron tracking-[0.2em]">UPLOAD TRANSACTION SCREENSHOT</p>
+                    <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+
+                    {txPhoto ? (
+                      <div className="relative rounded-2xl overflow-hidden border border-border/10 mb-4">
+                        <img src={txPhoto} alt="Transaction proof" className="w-full max-h-64 object-contain bg-secondary/10" />
+                        <div className="absolute top-3 right-3">
+                          <button data-interactive onClick={() => { setTxPhoto(null); setTxFileName(""); }}
+                            className="w-8 h-8 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center text-muted-foreground hover:text-foreground border border-border/20">
+                            <X size={14} />
+                          </button>
+                        </div>
+                        <div className="p-3 bg-secondary/10 border-t border-border/10">
+                          <div className="flex items-center gap-2">
+                            <ImageIcon size={12} className="text-emerald-400" />
+                            <span className="text-xs text-foreground truncate">{txFileName}</span>
+                            <Check size={12} className="text-emerald-400 ml-auto shrink-0" />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <button data-interactive onClick={() => fileInputRef.current?.click()}
+                        className="w-full rounded-2xl border-2 border-dashed border-border/30 hover:border-border/60 transition-colors p-8 flex flex-col items-center gap-3 group mb-4">
+                        <div className="w-14 h-14 rounded-2xl bg-secondary/30 flex items-center justify-center group-hover:bg-secondary/50 transition-colors">
+                          <Upload size={24} className="text-muted-foreground group-hover:text-foreground transition-colors" />
+                        </div>
+                        <div className="text-center">
+                          <p className="font-orbitron text-[10px] tracking-wider text-foreground mb-1">CLICK TO UPLOAD</p>
+                          <p className="text-[9px] text-muted-foreground">Upload your transaction screenshot (PNG, JPG)</p>
+                        </div>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Submit */}
+                  <button data-interactive onClick={handleSubmit}
+                    disabled={!txPhoto}
+                    className={`relative w-full py-4 rounded-2xl font-orbitron text-xs tracking-[0.25em] text-foreground overflow-hidden group ${!txPhoto ? "opacity-50" : ""}`}>
+                    <div className={`absolute inset-0 bg-gradient-to-r ${bot.accent}`} />
+                    <div className="absolute inset-[1px] rounded-[15px] bg-card/70 group-hover:bg-card/40 transition-colors duration-300" />
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      <Check size={14} /> CONFIRM & SUBMIT PROOF
+                    </span>
                   </button>
+
+                  <p className="text-[8px] text-muted-foreground text-center font-orbitron tracking-wider">
+                    <Shield size={9} className="inline mr-1 -mt-0.5" /> SECURE PAYMENT · ENCRYPTED CONNECTION
+                  </p>
                 </div>
-
-                <p className="text-[9px] text-muted-foreground mb-2 font-orbitron tracking-[0.2em]">TRANSACTION ID</p>
-                <input value={txId} onChange={(e) => setTxId(e.target.value)} placeholder="Paste your transaction ID here..."
-                  className="w-full rounded-xl p-4 text-sm text-foreground placeholder:text-muted-foreground bg-secondary/20 border border-border/10 outline-none focus:border-border/30 transition-colors mb-6" />
-
-                <button data-interactive onClick={handleSubmit}
-                  className="relative w-full py-4 rounded-2xl font-orbitron text-xs tracking-[0.25em] text-foreground overflow-hidden group">
-                  <div className={`absolute inset-0 bg-gradient-to-r ${bot.accent}`} />
-                  <div className="absolute inset-[1px] rounded-[15px] bg-card/70 group-hover:bg-card/40 transition-colors duration-300" />
-                  <span className="relative z-10 flex items-center justify-center gap-2">
-                    <Check size={14} /> CONFIRM & SUBMIT PROOF
-                  </span>
-                </button>
-
-                <p className="text-[8px] text-muted-foreground text-center mt-4 font-orbitron tracking-wider">
-                  <Shield size={9} className="inline mr-1 -mt-0.5" /> SECURE PAYMENT · ENCRYPTED CONNECTION
-                </p>
               </div>
             </motion.div>
           )}
