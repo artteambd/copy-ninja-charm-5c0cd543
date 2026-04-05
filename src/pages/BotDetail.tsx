@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, Check, Copy, Star, Shield, Clock, Zap, Package,
   ShoppingCart, BadgeCheck, Flame, Heart, Share2, Eye, ChevronRight,
-  TrendingUp, Award, Users, Upload, ImageIcon, X, Wallet, CreditCard
+  TrendingUp, Award, Users, Upload, ImageIcon, X, Wallet, CreditCard, User, Hash, FileText
 } from "lucide-react";
 import { bots } from "@/data/bots";
 import CustomCursor from "@/components/CustomCursor";
@@ -33,6 +33,8 @@ const BotDetail = () => {
   const [activeTab, setActiveTab] = useState<"overview" | "performance" | "reviews">("overview");
   const [txPhoto, setTxPhoto] = useState<string | null>(null);
   const [txFileName, setTxFileName] = useState("");
+  const [txId, setTxId] = useState("");
+  const [customerUsername, setCustomerUsername] = useState("");
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -69,8 +71,10 @@ const BotDetail = () => {
     }
   };
 
+  const canSubmit = txPhoto && txId.trim() && customerUsername.trim();
+
   const handleSubmit = () => {
-    if (txPhoto) setStep("success");
+    if (canSubmit) setStep("success");
   };
 
   return (
@@ -165,7 +169,7 @@ const BotDetail = () => {
                     {/* Stats Bar */}
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
                       className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {bot.results.map((r, i) => (
+                      {bot.results.map((r) => (
                         <div key={r.label} className="relative rounded-2xl overflow-hidden text-center py-5">
                           <div className={`absolute inset-0 bg-gradient-to-b ${bot.accent} opacity-25`} />
                           <div className="absolute inset-[1px] rounded-[15px] bg-card/90" />
@@ -275,7 +279,7 @@ const BotDetail = () => {
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
                       className="sticky top-24 glass-strong rounded-3xl overflow-hidden">
                       {/* Price Header */}
-                      <div className={`relative p-6 text-center`}>
+                      <div className="relative p-6 text-center">
                         <div className={`absolute inset-0 bg-gradient-to-br ${bot.accent} opacity-20`} />
                         <div className="relative z-10">
                           <p className="text-[9px] font-orbitron tracking-[0.3em] text-muted-foreground mb-2">PRICE</p>
@@ -346,7 +350,7 @@ const BotDetail = () => {
 
               <div className="glass-strong rounded-3xl overflow-hidden">
                 {/* Checkout Header */}
-                <div className={`relative p-6`}>
+                <div className="relative p-6">
                   <div className={`absolute inset-0 bg-gradient-to-r ${bot.accent} opacity-15`} />
                   <div className="relative z-10 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl glass-strong flex items-center justify-center">
@@ -383,10 +387,28 @@ const BotDetail = () => {
                     </div>
                   </div>
 
-                  {/* Payment Method */}
+                  {/* Step 1: Customer Username */}
                   <div>
                     <div className="flex items-center gap-2 mb-3">
-                      <Wallet size={14} className="text-foreground" />
+                      <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-[10px] font-orbitron text-foreground">1</div>
+                      <h3 className="font-orbitron text-sm tracking-wider">YOUR USERNAME</h3>
+                    </div>
+                    <div className="relative">
+                      <User size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <input
+                        value={customerUsername}
+                        onChange={(e) => setCustomerUsername(e.target.value)}
+                        placeholder="Enter your username (e.g. Telegram / WhatsApp)"
+                        className="w-full rounded-xl bg-secondary/20 border border-border/10 focus:border-border/40 p-4 pl-11 text-sm text-foreground placeholder:text-muted-foreground bg-transparent outline-none transition-colors font-mono"
+                      />
+                    </div>
+                    <p className="text-[8px] text-muted-foreground mt-1.5 ml-1">We'll use this to deliver your bot access</p>
+                  </div>
+
+                  {/* Step 2: Payment via Binance */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-[10px] font-orbitron text-foreground">2</div>
                       <h3 className="font-orbitron text-sm tracking-wider">PAYMENT VIA BINANCE</h3>
                     </div>
 
@@ -404,16 +426,37 @@ const BotDetail = () => {
                         {copied ? "Copied!" : "Copy"}
                       </button>
                     </div>
-                    <p className="text-[8px] text-muted-foreground mb-6">Send exactly <span className="text-foreground font-orbitron">${bot.price}</span> to this Binance Pay ID</p>
+                    <p className="text-[8px] text-muted-foreground mb-4">Send exactly <span className="text-foreground font-orbitron">${bot.price}</span> to this Binance Pay ID</p>
                   </div>
 
-                  {/* Upload Transaction Photo */}
+                  {/* Step 3: Transaction ID */}
                   <div>
-                    <p className="text-[9px] text-muted-foreground mb-3 font-orbitron tracking-[0.2em]">UPLOAD TRANSACTION SCREENSHOT</p>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-[10px] font-orbitron text-foreground">3</div>
+                      <h3 className="font-orbitron text-sm tracking-wider">TRANSACTION ID</h3>
+                    </div>
+                    <div className="relative">
+                      <Hash size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <input
+                        value={txId}
+                        onChange={(e) => setTxId(e.target.value)}
+                        placeholder="Paste your transaction ID here..."
+                        className="w-full rounded-xl bg-secondary/20 border border-border/10 focus:border-border/40 p-4 pl-11 text-sm text-foreground placeholder:text-muted-foreground bg-transparent outline-none transition-colors font-mono"
+                      />
+                    </div>
+                    <p className="text-[8px] text-muted-foreground mt-1.5 ml-1">Copy from your Binance payment confirmation</p>
+                  </div>
+
+                  {/* Step 4: Upload Transaction Photo */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-6 h-6 rounded-full bg-foreground/10 flex items-center justify-center text-[10px] font-orbitron text-foreground">4</div>
+                      <h3 className="font-orbitron text-sm tracking-wider">PROOF OF PAYMENT</h3>
+                    </div>
                     <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
 
                     {txPhoto ? (
-                      <div className="relative rounded-2xl overflow-hidden border border-border/10 mb-4">
+                      <div className="relative rounded-2xl overflow-hidden border border-border/10 mb-2">
                         <img src={txPhoto} alt="Transaction proof" className="w-full max-h-64 object-contain bg-secondary/10" />
                         <div className="absolute top-3 right-3">
                           <button data-interactive onClick={() => { setTxPhoto(null); setTxFileName(""); }}
@@ -431,22 +474,41 @@ const BotDetail = () => {
                       </div>
                     ) : (
                       <button data-interactive onClick={() => fileInputRef.current?.click()}
-                        className="w-full rounded-2xl border-2 border-dashed border-border/30 hover:border-border/60 transition-colors p-8 flex flex-col items-center gap-3 group mb-4">
+                        className="w-full rounded-2xl border-2 border-dashed border-border/30 hover:border-border/60 transition-colors p-8 flex flex-col items-center gap-3 group mb-2">
                         <div className="w-14 h-14 rounded-2xl bg-secondary/30 flex items-center justify-center group-hover:bg-secondary/50 transition-colors">
                           <Upload size={24} className="text-muted-foreground group-hover:text-foreground transition-colors" />
                         </div>
                         <div className="text-center">
-                          <p className="font-orbitron text-[10px] tracking-wider text-foreground mb-1">CLICK TO UPLOAD</p>
+                          <p className="font-orbitron text-[10px] tracking-wider text-foreground mb-1">UPLOAD SCREENSHOT</p>
                           <p className="text-[9px] text-muted-foreground">Upload your transaction screenshot (PNG, JPG)</p>
                         </div>
                       </button>
                     )}
                   </div>
 
+                  {/* Verification checklist */}
+                  <div className="rounded-xl bg-secondary/10 border border-border/10 p-4">
+                    <p className="text-[9px] font-orbitron tracking-[0.2em] text-muted-foreground mb-3">VERIFICATION CHECKLIST</p>
+                    <div className="space-y-2">
+                      {[
+                        { label: "Username provided", done: !!customerUsername.trim(), icon: User },
+                        { label: "Transaction ID entered", done: !!txId.trim(), icon: Hash },
+                        { label: "Payment screenshot uploaded", done: !!txPhoto, icon: FileText },
+                      ].map(({ label, done, icon: I }) => (
+                        <div key={label} className="flex items-center gap-2.5">
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors ${done ? "bg-emerald-500/20 text-emerald-400" : "bg-secondary/30 text-muted-foreground"}`}>
+                            {done ? <Check size={10} /> : <I size={10} />}
+                          </div>
+                          <span className={`text-[10px] font-orbitron tracking-wider transition-colors ${done ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Submit */}
                   <button data-interactive onClick={handleSubmit}
-                    disabled={!txPhoto}
-                    className={`relative w-full py-4 rounded-2xl font-orbitron text-xs tracking-[0.25em] text-foreground overflow-hidden group ${!txPhoto ? "opacity-50" : ""}`}>
+                    disabled={!canSubmit}
+                    className={`relative w-full py-4 rounded-2xl font-orbitron text-xs tracking-[0.25em] text-foreground overflow-hidden group transition-opacity ${!canSubmit ? "opacity-40 cursor-not-allowed" : ""}`}>
                     <div className={`absolute inset-0 bg-gradient-to-r ${bot.accent}`} />
                     <div className="absolute inset-[1px] rounded-[15px] bg-card/70 group-hover:bg-card/40 transition-colors duration-300" />
                     <span className="relative z-10 flex items-center justify-center gap-2">
@@ -473,6 +535,7 @@ const BotDetail = () => {
               <p className="text-muted-foreground mb-1">
                 <span className="text-foreground">{bot.name}</span> will be activated soon
               </p>
+              <p className="text-muted-foreground text-sm mb-2">Username: <span className="text-foreground font-mono">{customerUsername}</span></p>
               <p className="text-muted-foreground text-sm mb-8">You'll receive access within 24 hours</p>
               <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-5 py-2.5 text-[10px] font-orbitron tracking-wider text-emerald-400 mb-8">
                 <BadgeCheck size={13} /> PAYMENT PROOF RECEIVED
