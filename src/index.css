@@ -55,7 +55,13 @@
 @layer base {
   * {
     @apply border-border;
-    cursor: none !important;
+  }
+
+  /* Custom cursor only on non-touch devices */
+  @media (hover: hover) and (pointer: fine) {
+    * {
+      cursor: none !important;
+    }
   }
 
   body {
